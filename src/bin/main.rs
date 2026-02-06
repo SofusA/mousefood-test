@@ -10,13 +10,6 @@
 extern crate alloc;
 
 use alloc::boxed::Box;
-use embedded_graphics::{
-    mono_font::{MonoTextStyle, iso_8859_1::FONT_10X20},
-    pixelcolor::Rgb565,
-    prelude::*,
-    primitives::{PrimitiveStyleBuilder, Rectangle},
-    text::Text,
-};
 use esp_hal::clock::CpuClock;
 use esp_hal::delay::Delay;
 use esp_hal::gpio::{Level, Output, OutputConfig};
@@ -30,6 +23,10 @@ use mipidsi::{
     models::ILI9342CRgb565,
     options::{Orientation, Rotation},
 };
+use mousefood::EmbeddedBackend;
+use ratatui::Terminal;
+use ratatui::style::Style;
+use ratatui::widgets::Paragraph;
 
 #[panic_handler]
 fn panic(panic_info: &core::panic::PanicInfo) -> ! {
@@ -94,22 +91,15 @@ fn main() -> ! {
 
     log::info!("Starting render");
 
-    display.clear(Rgb565::BLACK).unwrap();
+    let backend = EmbeddedBackend::new(&mut display, Default::default());
+    let mut terminal = Terminal::new(backend).unwrap();
 
-    let style = PrimitiveStyleBuilder::new()
-        .stroke_color(Rgb565::WHITE)
-        .stroke_width(2)
-        .build();
-
-    Rectangle::new(Point::new(10, 10), Size::new(300, 220))
-        .into_styled(style)
-        .draw(&mut display)
-        .unwrap();
-
-    let text_style = MonoTextStyle::new(&FONT_10X20, Rgb565::WHITE);
-    Text::new("Hej Mathias", Point::new(20, 30), text_style)
-        .draw(&mut display)
-        .unwrap();
+    terminal
+        .draw(|f| {
+            let p = Paragraph::new("Hello").style(Style::default());
+            f.render_widget(p, f.area());
+        })
+        .ok();
 
     loop {
         delay.delay_millis(1000);

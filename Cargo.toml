@@ -9,19 +9,22 @@ name = "esp32-display-2"
 path = "./src/bin/main.rs"
 
 [dependencies]
-esp-hal = { version = "~1.0", features = ["esp32c6", "log-04", "unstable"] }
+esp-hal = { git = "https://github.com/esp-rs/esp-hal", features = ["esp32c6", "log-04", "unstable"] }
 
 
-esp-bootloader-esp-idf = { version = "0.4.0", features = ["esp32c6", "log-04"] }
+esp-bootloader-esp-idf = { git = "https://github.com/esp-rs/esp-hal", features = ["esp32c6", "log-04"] }
 log                    = "0.4.27"
 
 critical-section = "1.2.0"
-esp-alloc        = "0.9.0"
-esp-println      = { version = "0.16.1", features = ["esp32c6", "log-04"] }
+esp-alloc        = {git = "https://github.com/esp-rs/esp-hal"}
+esp-println      = { git = "https://github.com/esp-rs/esp-hal", features = ["esp32c6", "log-04"] }
 
 embedded-hal-bus = "0.3.0"
 embedded-graphics = "0.8"
 mipidsi = "0.9.0"
+
+ratatui = { version = "0.30", default-features = false }
+mousefood = "0.3.0"
 
 [profile.dev]
 # Rust debug is too slow.
